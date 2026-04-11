@@ -1,6 +1,16 @@
 import { useState } from "react";
-import { Search, ArrowRight, MessageCircle, Scale, Shield } from "lucide-react";
+import { Search, ArrowRight, MessageCircle, Scale, Shield, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface LegalResult {
+  section: string;
+  title: string;
+  summary: string;
+  penalty: string;
+  remedy: string;
+}
 
 const exampleQueries = [
   "My landlord won't return my deposit",
@@ -11,27 +21,43 @@ const exampleQueries = [
 
 const HeroSearch = () => {
   const [query, setQuery] = useState("");
-  const [showResult, setShowResult] = useState(false);
+  const [results, setResults] = useState<LegalResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const mockResults = [
-    {
-      section: "Section 406, IPC / Section 316, BNS",
-      title: "Criminal Breach of Trust",
-      summary: "If your landlord refuses to return your security deposit without valid reason, it may amount to criminal breach of trust or cheating.",
-      penalty: "Imprisonment up to 3 years, or fine, or both.",
-      remedy: "File a complaint at the nearest police station or consumer forum.",
-    },
-  ];
+  const handleSearch = async (searchQuery?: string) => {
+    const q = (searchQuery || query).trim();
+    if (!q) return;
 
-  const handleSearch = () => {
-    if (query.trim()) {
-      setShowResult(true);
+    setIsLoading(true);
+    setHasSearched(true);
+    setResults([]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("legal-mapper", {
+        body: { query: q },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      if (data?.results) {
+        setResults(data.results);
+      }
+    } catch (e: any) {
+      console.error("Search error:", e);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <section className="relative bg-primary text-primary-foreground overflow-hidden">
-      {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/20" />
         <div className="absolute bottom-20 right-20 w-48 h-48 rounded-full border-2 border-primary-foreground/20" />
@@ -40,7 +66,6 @@ const HeroSearch = () => {
 
       <div className="container relative py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-6">
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium">
             <Scale className="w-4 h-4" />
             <span>Legal rights in your language, in 2 minutes or less</span>
@@ -56,7 +81,6 @@ const HeroSearch = () => {
             No legal jargon. No confusing codes. Just tell us what happened in simple words.
           </p>
 
-          {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto">
             <div className="flex items-center bg-primary-foreground rounded-xl shadow-2xl overflow-hidden">
               <div className="flex items-center pl-4">
@@ -65,27 +89,25 @@ const HeroSearch = () => {
               <input
                 type="text"
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setShowResult(false);
-                }}
+                onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="e.g., My landlord won't return my deposit..."
                 className="flex-1 px-4 py-4 md:py-5 text-foreground bg-transparent outline-none text-base md:text-lg placeholder:text-muted-foreground"
+                disabled={isLoading}
               />
               <Button
                 variant="hero"
                 size="lg"
                 className="rounded-none rounded-r-xl h-full px-6"
-                onClick={handleSearch}
+                onClick={() => handleSearch()}
+                disabled={isLoading}
               >
-                <Search className="w-5 h-5" />
-                <span className="hidden sm:inline">Search</span>
+                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                <span className="hidden sm:inline">{isLoading ? "Analyzing..." : "Search"}</span>
               </Button>
             </div>
           </div>
 
-          {/* Example queries */}
           <div className="flex flex-wrap justify-center gap-2 pt-2">
             <span className="text-primary-foreground/60 text-sm">Try:</span>
             {exampleQueries.map((eq) => (
@@ -93,16 +115,16 @@ const HeroSearch = () => {
                 key={eq}
                 onClick={() => {
                   setQuery(eq);
-                  setShowResult(true);
+                  handleSearch(eq);
                 }}
-                className="text-sm bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-full px-3 py-1 transition-colors"
+                disabled={isLoading}
+                className="text-sm bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-full px-3 py-1 transition-colors disabled:opacity-50"
               >
                 {eq}
               </button>
             ))}
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-3 gap-4 pt-8 max-w-md mx-auto">
             {[
               { num: "500+", label: "IPC/BNS Sections" },
@@ -117,16 +139,28 @@ const HeroSearch = () => {
           </div>
         </div>
 
-        {/* Result Card */}
-        {showResult && (
+        {/* Loading state */}
+        {isLoading && (
           <div className="max-w-2xl mx-auto mt-10 animate-fade-in-up">
-            <div className="bg-card text-card-foreground rounded-xl shadow-2xl overflow-hidden">
+            <div className="bg-card text-card-foreground rounded-xl shadow-2xl p-8 text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-primary" />
+              <p className="text-muted-foreground">Analyzing your situation against Indian legal codes...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Results */}
+        {!isLoading && hasSearched && results.length > 0 && (
+          <div className="max-w-2xl mx-auto mt-10 space-y-4">
+            <div className="bg-card text-card-foreground rounded-xl shadow-2xl overflow-hidden animate-fade-in-up">
               <div className="bg-safe-green/10 border-b border-safe-green/20 px-6 py-3 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-safe-green" />
-                <span className="font-semibold text-safe-green">Relevant Law Found</span>
+                <span className="font-semibold text-safe-green">
+                  {results.length} Relevant Law{results.length > 1 ? "s" : ""} Found
+                </span>
               </div>
-              {mockResults.map((r, i) => (
-                <div key={i} className="p-6 space-y-4">
+              {results.map((r, i) => (
+                <div key={i} className={`p-6 space-y-4 ${i > 0 ? "border-t border-border" : ""}`}>
                   <div className="inline-block bg-trust-blue-lighter text-primary font-mono text-sm font-semibold px-3 py-1 rounded-md">
                     {r.section}
                   </div>
@@ -142,11 +176,16 @@ const HeroSearch = () => {
                       <p className="text-sm text-foreground">{r.remedy}</p>
                     </div>
                   </div>
-                  <Button variant="hero" className="w-full sm:w-auto">
-                    View step-by-step guide <ArrowRight className="w-4 h-4" />
-                  </Button>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {!isLoading && hasSearched && results.length === 0 && (
+          <div className="max-w-2xl mx-auto mt-10 animate-fade-in-up">
+            <div className="bg-card text-card-foreground rounded-xl shadow-2xl p-8 text-center">
+              <p className="text-muted-foreground">No matching laws found. Try describing your situation differently.</p>
             </div>
           </div>
         )}
