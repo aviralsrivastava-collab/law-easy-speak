@@ -6,12 +6,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `You are LexiLearn, an Indian legal expert AI. When a user describes a situation in plain language, you must:
+const SYSTEM_PROMPT = `You are LexiLearn, an Indian legal expert AI. You can understand queries in Hindi, English, or mixed Hinglish. When a user describes a situation in plain language, you must:
 
 1. Identify the most relevant IPC (Indian Penal Code) and/or BNS (Bharatiya Nyaya Sanhita) sections.
-2. Respond ONLY with a valid JSON object (no markdown, no extra text) in this exact format:
+2. Detect the language of the user's input. If Hindi or Hinglish, respond in Hindi. If English, respond in English.
+3. Respond ONLY with a valid JSON object (no markdown, no extra text) in this exact format:
 
 {
+  "language": "en" or "hi",
   "results": [
     {
       "section": "Section XXX, IPC / Section YYY, BNS",
@@ -20,15 +22,31 @@ const SYSTEM_PROMPT = `You are LexiLearn, an Indian legal expert AI. When a user
       "penalty": "The potential punishment or fine.",
       "remedy": "What the user can do — specific actionable steps."
     }
-  ]
+  ],
+  "roadmap": {
+    "title": "What to do next",
+    "steps": [
+      {
+        "step": 1,
+        "title": "Short step title",
+        "description": "1-2 sentence actionable description",
+        "documents": ["Document 1", "Document 2"],
+        "estimatedTime": "e.g., 1-2 days",
+        "escalation": "Optional: what to do if this step fails"
+      }
+    ]
+  }
 }
 
 Rules:
-- Return 1 to 3 most relevant sections.
+- Return 1 to 3 most relevant sections in "results".
+- Return 3-5 actionable steps in "roadmap".
 - Use simple, everyday language. No legal jargon.
 - If BNS equivalent exists, include both IPC and BNS section numbers.
 - If the situation is not clearly a legal offense, still try to find the closest applicable law and mention it may not directly apply.
-- Always include practical remedy steps (e.g., "File a complaint at the nearest police station").`;
+- Always include practical remedy steps (e.g., "File a complaint at the nearest police station").
+- The roadmap should be specific to the user's situation and include required documents, estimated timelines, and escalation paths.
+- If responding in Hindi, use Devanagari script for all text values in the JSON.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -97,10 +115,8 @@ serve(async (req) => {
       throw new Error("No response from AI");
     }
 
-    // Parse the JSON from the AI response
     let parsed;
     try {
-      // Remove potential markdown code blocks
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       parsed = JSON.parse(cleaned);
     } catch {
