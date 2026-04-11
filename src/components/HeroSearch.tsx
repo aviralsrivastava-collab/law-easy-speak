@@ -114,6 +114,30 @@ const HeroSearch = () => {
     }
   };
 
+  const toggleBookmark = async (r: LegalResult) => {
+    if (!user) {
+      toast.info("Sign in to bookmark legal sections");
+      return;
+    }
+    const isBookmarked = bookmarkedSections.has(r.section);
+    if (isBookmarked) {
+      await supabase.from("bookmarks").delete().eq("user_id", user.id).eq("section", r.section);
+      setBookmarkedSections((prev) => { const n = new Set(prev); n.delete(r.section); return n; });
+      toast.success("Bookmark removed");
+    } else {
+      await supabase.from("bookmarks").insert({
+        user_id: user.id,
+        section: r.section,
+        title: r.title,
+        summary: r.summary,
+        penalty: r.penalty,
+        remedy: r.remedy,
+      });
+      setBookmarkedSections((prev) => new Set(prev).add(r.section));
+      toast.success("Bookmarked!");
+    }
+  };
+
   const currentExamples = exampleQueries[language];
 
   return (
