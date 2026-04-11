@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Search, MessageCircle, Scale, Shield, Loader2, Globe } from "lucide-react";
+import { Search, MessageCircle, Scale, Shield, Loader2, Globe, Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import ProceduralRoadmap from "@/components/ProceduralRoadmap";
 
 interface LegalResult {
