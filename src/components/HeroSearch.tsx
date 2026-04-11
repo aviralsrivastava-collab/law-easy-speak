@@ -95,6 +95,17 @@ const HeroSearch = () => {
       if (data?.language) {
         setLanguage(data.language === "hi" ? "hi" : "en");
       }
+
+      // Save to history if logged in
+      if (user && data?.results) {
+        supabase.from("search_history").insert({
+          user_id: user.id,
+          query: q,
+          results: data.results,
+          roadmap: data.roadmap || null,
+          language: data.language || "en",
+        }).then(() => {});
+      }
     } catch (e: any) {
       console.error("Search error:", e);
       toast.error("Something went wrong. Please try again.");
