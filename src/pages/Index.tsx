@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSearch from "@/components/HeroSearch";
 import TopicLibrary from "@/components/TopicLibrary";
 import KnowYourRights from "@/components/KnowYourRights";
+import ArticlesSection from "@/components/ArticlesSection";
 import LegalAidLocator from "@/components/LegalAidLocator";
 import Footer from "@/components/Footer";
 
@@ -18,6 +19,9 @@ const Index = () => {
         </div>
         <div id="rights">
           <KnowYourRights />
+        </div>
+        <div id="articles">
+          <ArticlesSection />
         </div>
         <div id="aid">
           <LegalAidLocator />
