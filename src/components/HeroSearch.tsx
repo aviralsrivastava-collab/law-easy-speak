@@ -62,6 +62,9 @@ const HeroSearch = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<"en" | "hi">("en");
 
+  const { user } = useAuth();
+  const [bookmarkedSections, setBookmarkedSections] = useState<Set<string>>(new Set());
+
   const handleSearch = async (searchQuery?: string) => {
     const q = (searchQuery || query).trim();
     if (!q) return;
