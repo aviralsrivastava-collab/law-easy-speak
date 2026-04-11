@@ -141,23 +141,23 @@ const HeroSearch = () => {
   const currentExamples = exampleQueries[language];
 
   return (
-    <section className="relative bg-primary text-primary-foreground overflow-hidden">
+    <section className="relative bg-muted overflow-hidden">
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/20" />
-        <div className="absolute bottom-20 right-20 w-48 h-48 rounded-full border-2 border-primary-foreground/20" />
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 rounded-full border border-primary-foreground/10" />
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary/20" />
+        <div className="absolute bottom-20 right-20 w-48 h-48 rounded-full border-2 border-primary/20" />
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 rounded-full border border-primary/10" />
       </div>
 
       <div className="container relative py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <div className="flex items-center justify-center gap-3">
-            <div className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium">
-              <Scale className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground">
+              <Scale className="w-4 h-4 text-primary" />
               <span>{language === "hi" ? "आपकी भाषा में कानूनी अधिकार, 2 मिनट में" : "Legal rights in your language, in 2 minutes or less"}</span>
             </div>
             <button
               onClick={() => setLanguage(language === "en" ? "hi" : "en")}
-              className="inline-flex items-center gap-1 bg-primary-foreground/10 hover:bg-primary-foreground/20 backdrop-blur-sm rounded-full px-3 py-2 text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-1 bg-primary/10 hover:bg-primary/20 backdrop-blur-sm rounded-full px-3 py-2 text-sm font-medium text-foreground transition-colors"
             >
               <Globe className="w-4 h-4" />
               {language === "en" ? "हिंदी" : "EN"}
@@ -172,14 +172,14 @@ const HeroSearch = () => {
             )}
           </h1>
 
-          <p className="text-primary-foreground/80 text-lg max-w-xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             {language === "hi"
               ? "कोई कानूनी शब्दजाल नहीं। बस बताएं क्या हुआ, सीधे शब्दों में।"
               : "No legal jargon. No confusing codes. Just tell us what happened in simple words."}
           </p>
 
           <div className="relative max-w-2xl mx-auto">
-            <div className="flex items-center bg-primary-foreground rounded-xl shadow-2xl overflow-hidden">
+            <div className="flex items-center bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
               <div className="flex items-center pl-4">
                 <MessageCircle className="w-5 h-5 text-muted-foreground" />
               </div>
@@ -206,7 +206,7 @@ const HeroSearch = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-2 pt-2">
-            <span className="text-primary-foreground/60 text-sm">{currentExamples.label}</span>
+            <span className="text-muted-foreground text-sm">{currentExamples.label}</span>
             {currentExamples.queries.map((eq) => (
               <button
                 key={eq}
@@ -215,7 +215,7 @@ const HeroSearch = () => {
                   handleSearch(eq);
                 }}
                 disabled={isLoading}
-                className="text-sm bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-full px-3 py-1 transition-colors disabled:opacity-50"
+                className="text-sm bg-primary/10 hover:bg-primary/20 text-foreground rounded-full px-3 py-1 transition-colors disabled:opacity-50"
               >
                 {eq}
               </button>
@@ -230,7 +230,7 @@ const HeroSearch = () => {
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-2xl md:text-3xl font-bold text-warm-amber">{stat.num}</div>
-                <div className="text-xs text-primary-foreground/70">{stat.label}</div>
+                <div className="text-xs text-muted-foreground">{stat.label}</div>
               </div>
             ))}
           </div>
