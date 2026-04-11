@@ -258,10 +258,17 @@ const HeroSearch = () => {
               </div>
               {results.map((r, i) => (
                 <div key={i} className={`p-6 space-y-4 ${i > 0 ? "border-t border-border" : ""}`}>
-                  <div className="inline-block bg-trust-blue-lighter text-primary font-mono text-sm font-semibold px-3 py-1 rounded-md">
-                    {r.section}
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="inline-block bg-trust-blue-lighter text-primary font-mono text-sm font-semibold px-3 py-1 rounded-md">
+                        {r.section}
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mt-2">{r.title}</h3>
+                    </div>
+                    <button onClick={() => toggleBookmark(r)} className="p-2 hover:bg-secondary rounded-lg transition-colors flex-shrink-0" title="Bookmark">
+                      {bookmarkedSections.has(r.section) ? <BookmarkCheck className="w-5 h-5 text-warm-amber" /> : <Bookmark className="w-5 h-5 text-muted-foreground" />}
+                    </button>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">{r.title}</h3>
                   <p className="text-muted-foreground leading-relaxed">{r.summary}</p>
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div className="bg-destructive/5 border border-destructive/10 rounded-lg p-3">
