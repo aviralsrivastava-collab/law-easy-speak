@@ -75,6 +75,7 @@ const HeroSearch = () => {
     setHasSearched(true);
     setResults([]);
     setRoadmap(null);
+    setPrecedents([]);
 
     try {
       const { data, error } = await supabase.functions.invoke("legal-mapper", {
