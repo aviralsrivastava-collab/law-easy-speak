@@ -56,7 +56,6 @@ const KnowYourRights = () => {
       const utterance = new SpeechSynthesisUtterance(script);
       utterance.lang = lang === "hi" ? "hi-IN" : "en-IN";
       utterance.rate = 0.95;
-      utterance.pitch = 1;
 
       // Prefer a female voice in the requested language
       const voices = window.speechSynthesis.getVoices();
