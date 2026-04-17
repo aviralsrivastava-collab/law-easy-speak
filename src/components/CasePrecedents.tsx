@@ -1,4 +1,4 @@
-import { Gavel, FileText, Calendar, Building2, CheckCircle2 } from "lucide-react";
+import { Gavel, FileText, Calendar, Building2, CheckCircle2, Scale } from "lucide-react";
 
 export interface Precedent {
   caseName: string;
@@ -8,6 +8,7 @@ export interface Precedent {
   facts: string;
   outcome: string;
   firReference: string;
+  judgement?: string;
   relevance: string;
 }
 
@@ -65,6 +66,15 @@ const CasePrecedents = ({ precedents, language }: Props) => {
                 <p className="text-sm text-foreground">{p.outcome}</p>
               </div>
             </div>
+
+            {p.judgement && (
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+                <div className="text-xs font-semibold text-primary uppercase tracking-wide mb-1 flex items-center gap-1">
+                  <Scale className="w-3 h-3" /> {t("Court Judgement", "न्यायालय का निर्णय")}
+                </div>
+                <p className="text-sm text-foreground leading-relaxed">{p.judgement}</p>
+              </div>
+            )}
 
             <div className="bg-muted/50 rounded-md px-3 py-2 text-xs text-muted-foreground italic">
               {t("Why this matters: ", "यह क्यों प्रासंगिक है: ")} {p.relevance}
