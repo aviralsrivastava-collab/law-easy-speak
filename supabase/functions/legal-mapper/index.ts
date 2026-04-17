@@ -35,18 +35,32 @@ const SYSTEM_PROMPT = `You are LexiLearn, an Indian legal expert AI. You can und
         "escalation": "Optional: what to do if this step fails"
       }
     ]
-  }
+  },
+  "precedents": [
+    {
+      "caseName": "e.g., State of Maharashtra v. Rajesh Kumar",
+      "citation": "e.g., (2019) 4 SCC 123 or Crl. Appeal No. 456/2018",
+      "court": "e.g., Supreme Court of India / Delhi High Court",
+      "date": "e.g., 12 March 2019",
+      "facts": "1-2 line summary of what happened in this past case (similar to the user's situation).",
+      "outcome": "What the court decided — conviction, acquittal, compensation awarded, sentence given, etc.",
+      "firReference": "e.g., FIR No. 234/2018, P.S. Connaught Place, Delhi (or 'FIR registered under Sections X, Y at local police station')",
+      "relevance": "1 line on why this case is similar / useful for the user."
+    }
+  ]
 }
 
 Rules:
 - Return 1 to 3 most relevant sections in "results".
 - Return 3-5 actionable steps in "roadmap".
+- Return 2-3 real, well-known Indian case precedents in "precedents" where the same type of offence occurred. Use authentic, verifiable cases from Supreme Court / High Court judgements where possible (e.g., landmark IPC/BNS cases). Always include case name, citation, court, date, FIR reference and outcome so the user can authenticate them.
+- If you are not certain about exact citation numbers, give the best-known reference and keep facts accurate — never fabricate case names.
 - Use simple, everyday language. No legal jargon.
 - If BNS equivalent exists, include both IPC and BNS section numbers.
 - If the situation is not clearly a legal offense, still try to find the closest applicable law and mention it may not directly apply.
 - Always include practical remedy steps (e.g., "File a complaint at the nearest police station").
 - The roadmap should be specific to the user's situation and include required documents, estimated timelines, and escalation paths.
-- If responding in Hindi, use Devanagari script for all text values in the JSON.`;
+- If responding in Hindi, use Devanagari script for all text values in the JSON (case names can stay in English).`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
