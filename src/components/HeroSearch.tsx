@@ -172,16 +172,16 @@ const HeroSearch = () => {
 
           <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-balance">
             {language === "hi" ? (
-              <>अपनी स्थिति बताएँ।<br /><span className="text-warm-amber">हम कानून ढूंढेंगे।</span></>
+              <>आपकी कहानी सुनेंगे।<br /><span className="text-warm-amber">कानून हम ढूंढेंगे।</span></>
             ) : (
-              <>Describe your situation.<br /><span className="text-warm-amber">We'll find the law.</span></>
+              <>You speak. We decode the law.<br /><span className="text-warm-amber">Backed by real cases.</span></>
             )}
           </h1>
 
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             {language === "hi"
-              ? "कोई कानूनी शब्दजाल नहीं। बस बताएं क्या हुआ, सीधे शब्दों में।"
-              : "No legal jargon. No confusing codes. Just tell us what happened in simple words."}
+              ? "बिना वकील की फीस। बिना जटिल भाषा। AI से तुरंत IPC/BNS धाराएँ, FIR रोडमैप और मिलते-जुलते पुराने मुक़दमे पाएँ।"
+              : "No lawyer fees. No legal jargon. Get IPC/BNS sections, an FIR roadmap, and similar past judgements — instantly."}
           </p>
 
           <div className="relative max-w-2xl mx-auto">
