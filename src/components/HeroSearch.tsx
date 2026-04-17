@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Search, MessageCircle, Scale, Shield, Loader2, Globe, Bookmark, BookmarkCheck } from "lucide-react";
+import { Search, MessageCircle, Scale, Shield, Loader2, Globe, Bookmark, BookmarkCheck, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import ProceduralRoadmap from "@/components/ProceduralRoadmap";
 import CasePrecedents, { Precedent } from "@/components/CasePrecedents";
+import jsPDF from "jspdf";
 
 interface LegalResult {
   section: string;
@@ -66,6 +67,65 @@ const HeroSearch = () => {
 
   const { user } = useAuth();
   const [bookmarkedSections, setBookmarkedSections] = useState<Set<string>>(new Set());
+  const [generatingFir, setGeneratingFir] = useState<string | null>(null);
+
+  const generateFirDraft = async (r: LegalResult) => {
+    setGeneratingFir(r.section);
+    try {
+      const { data, error } = await supabase.functions.invoke("fir-draft", {
+        body: { situation: query, section: r.section, title: r.title },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const margin = 48;
+      const pageW = doc.internal.pageSize.getWidth();
+      const maxW = pageW - margin * 2;
+      let y = margin;
+
+      const writeBlock = (text: string, opts: { size?: number; bold?: boolean; gap?: number } = {}) => {
+        const { size = 11, bold = false, gap = 14 } = opts;
+        doc.setFont("helvetica", bold ? "bold" : "normal");
+        doc.setFontSize(size);
+        const lines = doc.splitTextToSize(text || "", maxW);
+        for (const line of lines) {
+          if (y > doc.internal.pageSize.getHeight() - margin) {
+            doc.addPage();
+            y = margin;
+          }
+          doc.text(line, margin, y);
+          y += size + 4;
+        }
+        y += gap;
+      };
+
+      writeBlock(data.title || "FIR Complaint Letter", { size: 16, bold: true });
+      writeBlock(`Date: ${new Date().toLocaleDateString()}`, { size: 10 });
+      writeBlock(`To,\n${data.to || "The Station House Officer"}`, { size: 11 });
+      writeBlock(`Subject: ${data.subject || ""}`, { size: 11, bold: true });
+      writeBlock(data.body || "", { size: 11 });
+      writeBlock(data.signature || "Yours sincerely,\n[Your Full Name]", { size: 11 });
+
+      if (Array.isArray(data.checklist) && data.checklist.length) {
+        writeBlock("Documents to attach:", { size: 12, bold: true, gap: 6 });
+        data.checklist.forEach((item: string, i: number) => writeBlock(`${i + 1}. ${item}`, { size: 11, gap: 2 }));
+      }
+
+      writeBlock(`Legal basis: ${r.section} — ${r.title}`, { size: 10 });
+
+      doc.save(`FIR-Draft-${r.section.replace(/[^a-z0-9]/gi, "_")}.pdf`);
+      toast.success(language === "hi" ? "FIR ड्राफ्ट डाउनलोड हो गया" : "FIR draft downloaded");
+    } catch (e) {
+      console.error("FIR draft error:", e);
+      toast.error(language === "hi" ? "FIR ड्राफ्ट जनरेट नहीं हो सका" : "Could not generate FIR draft");
+    } finally {
+      setGeneratingFir(null);
+    }
+  };
 
   const handleSearch = async (searchQuery?: string) => {
     const q = (searchQuery || query).trim();
@@ -289,6 +349,24 @@ const HeroSearch = () => {
                       </div>
                       <p className="text-sm text-foreground">{r.remedy}</p>
                     </div>
+                  </div>
+                  <div className="pt-1">
+                    <Button
+                      variant="amber"
+                      size="sm"
+                      onClick={() => generateFirDraft(r)}
+                      disabled={generatingFir === r.section}
+                      className="w-full sm:w-auto"
+                    >
+                      {generatingFir === r.section ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <FileDown className="w-4 h-4" />
+                      )}
+                      {generatingFir === r.section
+                        ? (language === "hi" ? "तैयार हो रहा है..." : "Generating...")
+                        : (language === "hi" ? "FIR ड्राफ्ट डाउनलोड करें (PDF)" : "Generate FIR Draft (PDF)")}
+                    </Button>
                   </div>
                 </div>
               ))}
