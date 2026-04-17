@@ -56,13 +56,18 @@ const KnowYourRights = () => {
       const utterance = new SpeechSynthesisUtterance(script);
       utterance.lang = lang === "hi" ? "hi-IN" : "en-IN";
       utterance.rate = 0.95;
-      utterance.pitch = 1;
 
-      // Try to find a matching voice
+      // Prefer a female voice in the requested language
       const voices = window.speechSynthesis.getVoices();
       const langPrefix = lang === "hi" ? "hi" : "en";
-      const matchVoice = voices.find(v => v.lang.startsWith(langPrefix));
-      if (matchVoice) utterance.voice = matchVoice;
+      const femaleHints = /female|woman|zira|aria|jenny|samantha|victoria|susan|karen|tessa|fiona|moira|google.*(uk|us).*female|kalpana|swara|heera|priya|neerja|raveena|lekha/i;
+      const langVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix));
+      const femaleVoice =
+        langVoices.find(v => femaleHints.test(v.name)) ||
+        voices.find(v => femaleHints.test(v.name)) ||
+        langVoices[0];
+      if (femaleVoice) utterance.voice = femaleVoice;
+      utterance.pitch = 1.15;
 
       utterance.onend = () => { setPlayingIndex(null); setCurrentUtterance(null); };
       utterance.onerror = () => { setPlayingIndex(null); setCurrentUtterance(null); };
