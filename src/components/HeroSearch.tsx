@@ -59,6 +59,7 @@ const HeroSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<LegalResult[]>([]);
   const [roadmap, setRoadmap] = useState<RoadmapData | null>(null);
+  const [precedents, setPrecedents] = useState<Precedent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<"en" | "hi">("en");
