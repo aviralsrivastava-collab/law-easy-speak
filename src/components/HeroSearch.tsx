@@ -295,6 +295,7 @@ const HeroSearch = () => {
             </div>
 
             {roadmap && <ProceduralRoadmap roadmap={roadmap} />}
+            {precedents.length > 0 && <CasePrecedents precedents={precedents} language={language} />}
           </div>
         )}
 
