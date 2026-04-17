@@ -70,6 +70,11 @@ const HeroSearch = () => {
   const [generatingFir, setGeneratingFir] = useState<string | null>(null);
 
   const generateFirDraft = async (r: LegalResult) => {
+    const situation = query.trim();
+    if (!situation) {
+      toast.error(language === "hi" ? "कृपया पहले अपनी स्थिति बताएँ" : "Please describe your situation first");
+      return;
+    }
     setGeneratingFir(r.section);
     try {
       const { data, error } = await supabase.functions.invoke("fir-draft", {
