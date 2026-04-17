@@ -78,7 +78,7 @@ const HeroSearch = () => {
     setGeneratingFir(r.section);
     try {
       const { data, error } = await supabase.functions.invoke("fir-draft", {
-        body: { situation: query, section: r.section, title: r.title },
+        body: { situation, section: r.section, title: r.title },
       });
       if (error) throw error;
       if (data?.error) {
