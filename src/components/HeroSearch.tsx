@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import ProceduralRoadmap from "@/components/ProceduralRoadmap";
+import CasePrecedents, { Precedent } from "@/components/CasePrecedents";
 
 interface LegalResult {
   section: string;
@@ -58,6 +59,7 @@ const HeroSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<LegalResult[]>([]);
   const [roadmap, setRoadmap] = useState<RoadmapData | null>(null);
+  const [precedents, setPrecedents] = useState<Precedent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<"en" | "hi">("en");
@@ -73,6 +75,7 @@ const HeroSearch = () => {
     setHasSearched(true);
     setResults([]);
     setRoadmap(null);
+    setPrecedents([]);
 
     try {
       const { data, error } = await supabase.functions.invoke("legal-mapper", {
@@ -91,6 +94,9 @@ const HeroSearch = () => {
       }
       if (data?.roadmap) {
         setRoadmap(data.roadmap);
+      }
+      if (Array.isArray(data?.precedents)) {
+        setPrecedents(data.precedents);
       }
       if (data?.language) {
         setLanguage(data.language === "hi" ? "hi" : "en");
@@ -153,7 +159,7 @@ const HeroSearch = () => {
           <div className="flex items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground">
               <Scale className="w-4 h-4 text-primary" />
-              <span>{language === "hi" ? "आपकी भाषा में कानूनी अधिकार, 2 मिनट में" : "Legal rights in your language, in 2 minutes or less"}</span>
+              <span>{language === "hi" ? "✨ हर नागरिक के लिए न्याय — सरल, तेज़, मुफ़्त" : "✨ Justice made simple — for every Indian, in 2 minutes"}</span>
             </div>
             <button
               onClick={() => setLanguage(language === "en" ? "hi" : "en")}
@@ -166,16 +172,16 @@ const HeroSearch = () => {
 
           <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-balance">
             {language === "hi" ? (
-              <>अपनी स्थिति बताएँ।<br /><span className="text-warm-amber">हम कानून ढूंढेंगे।</span></>
+              <>आपकी कहानी सुनेंगे।<br /><span className="text-warm-amber">कानून हम ढूंढेंगे।</span></>
             ) : (
-              <>Describe your situation.<br /><span className="text-warm-amber">We'll find the law.</span></>
+              <>You speak. We decode the law.<br /><span className="text-warm-amber">Backed by real cases.</span></>
             )}
           </h1>
 
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             {language === "hi"
-              ? "कोई कानूनी शब्दजाल नहीं। बस बताएं क्या हुआ, सीधे शब्दों में।"
-              : "No legal jargon. No confusing codes. Just tell us what happened in simple words."}
+              ? "बिना वकील की फीस। बिना जटिल भाषा। AI से तुरंत IPC/BNS धाराएँ, FIR रोडमैप और मिलते-जुलते पुराने मुक़दमे पाएँ।"
+              : "No lawyer fees. No legal jargon. Get IPC/BNS sections, an FIR roadmap, and similar past judgements — instantly."}
           </p>
 
           <div className="relative max-w-2xl mx-auto">
@@ -289,6 +295,7 @@ const HeroSearch = () => {
             </div>
 
             {roadmap && <ProceduralRoadmap roadmap={roadmap} />}
+            {precedents.length > 0 && <CasePrecedents precedents={precedents} language={language} />}
           </div>
         )}
 
