@@ -45,6 +45,7 @@ const SYSTEM_PROMPT = `You are LexiLearn, an Indian legal expert AI. You can und
       "facts": "1-2 line summary of what happened in this past case (similar to the user's situation).",
       "outcome": "What the court decided — conviction, acquittal, compensation awarded, sentence given, etc.",
       "firReference": "e.g., FIR No. 234/2018, P.S. Connaught Place, Delhi (or 'FIR registered under Sections X, Y at local police station')",
+      "judgement": "3-5 sentence summary of the court's actual judgement / ratio: what the court held, the reasoning, sentence/compensation awarded, and any important legal principle laid down. Quote a short line from the judgement if well-known.",
       "relevance": "1 line on why this case is similar / useful for the user."
     }
   ]
