@@ -95,6 +95,9 @@ const HeroSearch = () => {
       if (data?.roadmap) {
         setRoadmap(data.roadmap);
       }
+      if (Array.isArray(data?.precedents)) {
+        setPrecedents(data.precedents);
+      }
       if (data?.language) {
         setLanguage(data.language === "hi" ? "hi" : "en");
       }
