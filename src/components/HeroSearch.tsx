@@ -224,7 +224,7 @@ const HeroSearch = () => {
           <div className="flex items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground">
               <Scale className="w-4 h-4 text-primary" />
-              <span>{language === "hi" ? "✨ हर नागरिक के लिए न्याय — सरल, तेज़, मुफ़्त" : "✨ Justice made simple — for every Indian, in 2 minutes"}</span>
+              <span>{language === "hi" ? "✨ डर नहीं, अब आपके पास कानून है" : "✨ You're not alone — the law is on your side"}</span>
             </div>
             <button
               onClick={() => setLanguage(language === "en" ? "hi" : "en")}
@@ -237,16 +237,16 @@ const HeroSearch = () => {
 
           <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-balance">
             {language === "hi" ? (
-              <>आपकी कहानी सुनेंगे।<br /><span className="text-warm-amber">कानून हम ढूंढेंगे।</span></>
+              <>आपकी आवाज़, आपका हक़।<br /><span className="text-warm-amber">कानून अब आपकी भाषा बोलेगा।</span></>
             ) : (
-              <>You speak. We decode the law.<br /><span className="text-warm-amber">Backed by real cases.</span></>
+              <>Your voice. Your rights.<br /><span className="text-warm-amber">The law, finally on your side.</span></>
             )}
           </h1>
 
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             {language === "hi"
-              ? "बिना वकील की फीस। बिना जटिल भाषा। AI से तुरंत IPC/BNS धाराएँ, FIR रोडमैप और मिलते-जुलते पुराने मुक़दमे पाएँ।"
-              : "No lawyer fees. No legal jargon. Get IPC/BNS sections, an FIR roadmap, and similar past judgements — instantly."}
+              ? "कोई वकील नहीं, कोई फीस नहीं, कोई मुश्किल भाषा नहीं। बस अपनी कहानी बताइए — हम 2 मिनट में IPC/BNS धारा, FIR ड्राफ्ट और मिलते-जुलते असली मुक़दमे लाएँगे।"
+              : "No lawyer. No fees. No jargon. Just tell us what happened — in 2 minutes you'll have the right IPC/BNS section, a ready FIR draft, and real past judgements to back you up."}
           </p>
 
           <div className="relative max-w-2xl mx-auto">
