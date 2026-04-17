@@ -159,7 +159,7 @@ const HeroSearch = () => {
           <div className="flex items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground">
               <Scale className="w-4 h-4 text-primary" />
-              <span>{language === "hi" ? "आपकी भाषा में कानूनी अधिकार, 2 मिनट में" : "Legal rights in your language, in 2 minutes or less"}</span>
+              <span>{language === "hi" ? "✨ हर नागरिक के लिए न्याय — सरल, तेज़, मुफ़्त" : "✨ Justice made simple — for every Indian, in 2 minutes"}</span>
             </div>
             <button
               onClick={() => setLanguage(language === "en" ? "hi" : "en")}
