@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import ProceduralRoadmap from "@/components/ProceduralRoadmap";
+import CasePrecedents, { Precedent } from "@/components/CasePrecedents";
 
 interface LegalResult {
   section: string;
