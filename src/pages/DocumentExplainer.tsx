@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, FileText, Upload, AlertTriangle, CheckCircle2, Clock, HelpCircle } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
-// @ts-expect-error - vite worker import
+// @ts-ignore - vite worker import
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";

@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSearch from "@/components/HeroSearch";
+import CategoriesSection from "@/components/CategoriesSection";
 import TopicLibrary from "@/components/TopicLibrary";
 import KnowYourRights from "@/components/KnowYourRights";
 import ArticlesSection from "@/components/ArticlesSection";
@@ -13,6 +14,9 @@ const Index = () => {
       <main className="flex-1">
         <div id="mapper">
           <HeroSearch />
+        </div>
+        <div id="categories">
+          <CategoriesSection />
         </div>
         <div id="topics">
           <TopicLibrary />
