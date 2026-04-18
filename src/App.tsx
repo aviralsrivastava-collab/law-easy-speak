@@ -7,6 +7,12 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index.tsx";
 import Auth from "./pages/Auth.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import ArticleDetail from "./pages/ArticleDetail.tsx";
+import CategoryPage from "./pages/CategoryPage.tsx";
+import DocumentExplainer from "./pages/DocumentExplainer.tsx";
+import QuizzesIndex from "./pages/QuizzesIndex.tsx";
+import QuizPlayer from "./pages/QuizPlayer.tsx";
+import Helplines from "./pages/Helplines.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +28,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/article/:slug" element={<ArticleDetail />} />
+            <Route path="/category/:slug" element={<CategoryPage />} />
+            <Route path="/document-explainer" element={<DocumentExplainer />} />
+            <Route path="/quizzes" element={<QuizzesIndex />} />
+            <Route path="/quizzes/:slug" element={<QuizPlayer />} />
+            <Route path="/helplines" element={<Helplines />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

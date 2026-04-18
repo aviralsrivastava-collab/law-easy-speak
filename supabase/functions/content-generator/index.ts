@@ -30,19 +30,33 @@ serve(async (req) => {
     let userPrompt = "";
 
     if (type === "article") {
-      systemPrompt = `You are LexiLearn, an Indian legal educator. Write detailed, plain-language legal guides for Indian citizens.
-Format your response as JSON with this structure:
+      systemPrompt = `You are LexiLearn, an Indian legal educator. Write detailed, accurate legal guides for Indian citizens.
+Return STRICT JSON with this exact structure (no markdown):
 {
   "title": "Article title",
-  "content": [
-    { "heading": "Section heading", "text": "Detailed paragraph content" }
+  "category": "Family Law | Criminal Law | Labour & Employment | Property Law | Consumer Rights | Cyber & Digital | Government & RTI | Women & Children",
+  "readTime": "5 min",
+  "simple": [
+    { "heading": "Plain-language section heading", "text": "Easy paragraph a 10th-grader would understand. No jargon." }
   ],
-  "keyTakeaways": ["Point 1", "Point 2"],
-  "disclaimer": "Legal disclaimer text"
+  "legal": [
+    { "heading": "Formal heading", "text": "Precise legal explanation citing sections, with statutory language." }
+  ],
+  "keyTakeaways": ["Actionable point 1", "Actionable point 2", "Actionable point 3"],
+  "citations": [
+    { "act": "Bharatiya Nyaya Sanhita, 2023", "section": "Section 103", "title": "Punishment for murder", "url": "https://www.indiacode.nic.in/handle/123456789/20062" }
+  ],
+  "relatedArticles": [
+    { "title": "Related article title", "category": "Criminal Law", "excerpt": "1-line summary" }
+  ],
+  "disclaimer": "This is not legal advice..."
 }
-Write 4-6 content sections. Use simple language. Include practical examples and actionable steps.
-Do NOT use markdown in text values. Keep each section 100-150 words.`;
-      userPrompt = `Write a comprehensive legal guide about: "${title}"\nDescription: ${description || ""}\nCategory: ${category || "General"}`;
+Rules:
+- Write 4-6 sections in BOTH "simple" and "legal" arrays, covering the same topics but at different reading levels.
+- Provide 3-6 real citations to Indian Acts. Use https://www.indiacode.nic.in URLs (search format if exact URL unknown: https://www.indiacode.nic.in/simple-search?query=ACT_NAME).
+- Provide 3-4 relatedArticles in the SAME or adjacent category.
+- Keep each section 80-140 words.`;
+      userPrompt = `Write the legal guide titled: "${title}"\nDescription: ${description || ""}\nCategory hint: ${category || "General"}`;
     } else if (type === "topic") {
       systemPrompt = `You are LexiLearn, an Indian legal educator. Create comprehensive topic overviews about Indian law for common citizens.
 Format your response as JSON:
