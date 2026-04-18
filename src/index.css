@@ -45,6 +45,24 @@
     --warm-amber-foreground: 220 20% 6%;
     --hero-gradient: linear-gradient(135deg, hsl(220 20% 8%), hsl(213 40% 15%));
 
+    /* Law category color system */
+    --cat-family: 330 75% 60%;
+    --cat-family-foreground: 0 0% 100%;
+    --cat-criminal: 0 72% 55%;
+    --cat-criminal-foreground: 0 0% 100%;
+    --cat-labour: 38 92% 55%;
+    --cat-labour-foreground: 220 20% 6%;
+    --cat-property: 213 80% 58%;
+    --cat-property-foreground: 0 0% 100%;
+    --cat-consumer: 152 60% 45%;
+    --cat-consumer-foreground: 0 0% 100%;
+    --cat-cyber: 270 70% 65%;
+    --cat-cyber-foreground: 0 0% 100%;
+    --cat-government: 180 60% 45%;
+    --cat-government-foreground: 0 0% 100%;
+    --cat-women: 290 70% 60%;
+    --cat-women-foreground: 0 0% 100%;
+
     --sidebar-background: 220 18% 12%;
     --sidebar-foreground: 210 20% 85%;
     --sidebar-primary: 213 80% 55%;
