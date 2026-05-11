@@ -1,5 +1,9 @@
-import { useState } from "react";
-import { Search, MessageCircle, Scale, Shield, Loader2, Globe, Bookmark, BookmarkCheck, FileDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Search, MessageCircle, Scale, Shield, Loader2, Globe, Bookmark, BookmarkCheck,
+  FileDown, Mic, MicOff, Sparkles, FileText, Upload, PhoneCall, BookOpen,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -56,6 +60,29 @@ const placeholders: Record<string, string> = {
   hi: "जैसे, मकान मालिक मेरी जमानत वापस नहीं कर रहा...",
 };
 
+// Smart suggestion chips shown below the search box
+const suggestionChips: Record<string, { label: string; query: string }[]> = {
+  en: [
+    { label: "Rent agreement", query: "Help me understand my rent agreement and tenant rights" },
+    { label: "Police complaint", query: "How do I file a police complaint / FIR?" },
+    { label: "Consumer case", query: "I was sold a defective product and the seller refuses refund" },
+    { label: "Workplace harassment", query: "I am facing harassment at my workplace" },
+    { label: "Cyber fraud", query: "I lost money to an online scam, how do I report it?" },
+    { label: "Domestic violence", query: "I am facing domestic violence at home" },
+  ],
+  hi: [
+    { label: "किराया समझौता", query: "मेरे किरायेदार अधिकार और किराया समझौता समझाइए" },
+    { label: "पुलिस शिकायत", query: "मैं FIR / पुलिस शिकायत कैसे दर्ज करूँ?" },
+    { label: "उपभोक्ता मामला", query: "मुझे खराब प्रोडक्ट बेचा गया, दुकानदार रिफंड नहीं दे रहा" },
+    { label: "कार्यस्थल उत्पीड़न", query: "मैं अपने कार्यस्थल पर उत्पीड़न का सामना कर रहा/रही हूँ" },
+    { label: "साइबर धोखाधड़ी", query: "मैंने ऑनलाइन घोटाले में पैसे गँवाए, रिपोर्ट कैसे करूँ?" },
+    { label: "घरेलू हिंसा", query: "मैं घर में घरेलू हिंसा का सामना कर रहा/रही हूँ" },
+  ],
+};
+
+// Web Speech API typing for browsers
+type SpeechRec = any;
+
 const HeroSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<LegalResult[]>([]);
@@ -64,10 +91,64 @@ const HeroSearch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<"en" | "hi">("en");
+  const [isListening, setIsListening] = useState(false);
+  const [rotatingIdx, setRotatingIdx] = useState(0);
+  const recognitionRef = useRef<SpeechRec | null>(null);
+  const navigate = useNavigate();
 
   const { user } = useAuth();
   const [bookmarkedSections, setBookmarkedSections] = useState<Set<string>>(new Set());
   const [generatingFir, setGeneratingFir] = useState<string | null>(null);
+
+  // Rotate placeholder text every 3.5s for a "live" feel when input is empty
+  useEffect(() => {
+    if (query) return;
+    const id = setInterval(() => {
+      setRotatingIdx((i) => (i + 1) % exampleQueries[language].queries.length);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [query, language]);
+
+  const livePlaceholder =
+    query.length === 0
+      ? exampleQueries[language].queries[rotatingIdx]
+      : placeholders[language];
+
+  const toggleVoiceInput = () => {
+    const SR: any =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      toast.error(
+        language === "hi"
+          ? "इस ब्राउज़र में वॉइस इनपुट उपलब्ध नहीं है"
+          : "Voice input is not supported in this browser"
+      );
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current?.stop?.();
+      setIsListening(false);
+      return;
+    }
+    const rec = new SR();
+    rec.lang = language === "hi" ? "hi-IN" : "en-IN";
+    rec.interimResults = true;
+    rec.continuous = false;
+    rec.onresult = (e: any) => {
+      const transcript = Array.from(e.results)
+        .map((r: any) => r[0].transcript)
+        .join("");
+      setQuery(transcript);
+    };
+    rec.onend = () => setIsListening(false);
+    rec.onerror = () => {
+      setIsListening(false);
+      toast.error(language === "hi" ? "वॉइस इनपुट विफल" : "Voice input failed");
+    };
+    recognitionRef.current = rec;
+    setIsListening(true);
+    rec.start();
+  };
 
   const generateFirDraft = async (r: LegalResult) => {
     const situation = query.trim();
@@ -210,18 +291,33 @@ const HeroSearch = () => {
   };
 
   const currentExamples = exampleQueries[language];
+  const currentChips = suggestionChips[language];
 
   return (
-    <section className="relative bg-muted overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary/20" />
-        <div className="absolute bottom-20 right-20 w-48 h-48 rounded-full border-2 border-primary/20" />
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 rounded-full border border-primary/10" />
+    <section className="relative overflow-hidden hero-animated-gradient">
+      {/* Animated glow blobs */}
+      <div
+        className="hero-glow w-[420px] h-[420px] -top-32 -left-24 bg-primary/30 animate-glow-drift-slow"
+        aria-hidden
+      />
+      <div
+        className="hero-glow w-[360px] h-[360px] top-1/2 -right-24 bg-warm-amber/20 animate-glow-drift-med"
+        aria-hidden
+      />
+      <div
+        className="hero-glow w-[300px] h-[300px] bottom-0 left-1/3 bg-safe-green/15 animate-glow-drift-slow"
+        aria-hidden
+      />
+      {/* Subtle ring decorations */}
+      <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary/40" />
+        <div className="absolute bottom-20 right-20 w-48 h-48 rounded-full border-2 border-primary/40" />
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 rounded-full border border-primary/30" />
       </div>
 
-      <div className="container relative py-16 md:py-24">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <div className="flex items-center justify-center gap-3">
+      <div className="container relative py-20 md:py-32">
+        <div className="max-w-3xl mx-auto text-center space-y-7">
+          <div className="flex items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
             <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground">
               <Scale className="w-4 h-4 text-primary" />
               <span>{language === "hi" ? "✨ डर नहीं, अब आपके पास कानून है" : "✨ You're not alone — the law is on your side"}</span>
@@ -235,7 +331,10 @@ const HeroSearch = () => {
             </button>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-balance">
+          <h1
+            className="text-3xl md:text-5xl font-extrabold leading-tight text-balance animate-fade-in-up opacity-0"
+            style={{ animationDelay: "120ms" }}
+          >
             {language === "hi" ? (
               <>आपकी आवाज़, आपका हक़।<br /><span className="text-warm-amber">कानून अब आपकी भाषा बोलेगा।</span></>
             ) : (
@@ -243,26 +342,56 @@ const HeroSearch = () => {
             )}
           </h1>
 
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+          <p
+            className="text-muted-foreground text-lg max-w-xl mx-auto animate-fade-in-up opacity-0"
+            style={{ animationDelay: "260ms" }}
+          >
             {language === "hi"
               ? "कोई वकील नहीं, कोई फीस नहीं, कोई मुश्किल भाषा नहीं। बस अपनी कहानी बताइए — हम 2 मिनट में IPC/BNS धारा, FIR ड्राफ्ट और मिलते-जुलते असली मुक़दमे लाएँगे।"
               : "No lawyer. No fees. No jargon. Just tell us what happened — in 2 minutes you'll have the right IPC/BNS section, a ready FIR draft, and real past judgements to back you up."}
           </p>
 
-          <div className="relative max-w-2xl mx-auto">
-            <div className="flex items-center bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
+          <div
+            className="relative max-w-2xl mx-auto animate-fade-in-up opacity-0"
+            style={{ animationDelay: "400ms" }}
+          >
+            {/* Glow ring around input */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/40 via-warm-amber/30 to-primary/40 rounded-2xl blur-md opacity-60 animate-pulse-gentle pointer-events-none" />
+            <div className="relative flex items-center bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
               <div className="flex items-center pl-4">
-                <MessageCircle className="w-5 h-5 text-muted-foreground" />
+                {isLoading ? (
+                  <span className="flex items-center gap-1" aria-label="loading">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-typing-dot" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-typing-dot" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-typing-dot" style={{ animationDelay: "300ms" }} />
+                  </span>
+                ) : isListening ? (
+                  <span className="relative flex items-center justify-center">
+                    <span className="absolute w-5 h-5 rounded-full bg-destructive/30 animate-ping" />
+                    <Mic className="w-5 h-5 text-destructive relative" />
+                  </span>
+                ) : (
+                  <MessageCircle className="w-5 h-5 text-muted-foreground" />
+                )}
               </div>
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                placeholder={placeholders[language]}
+                placeholder={livePlaceholder}
                 className="flex-1 px-4 py-4 md:py-5 text-foreground bg-transparent outline-none text-base md:text-lg placeholder:text-muted-foreground"
                 disabled={isLoading}
               />
+              <button
+                type="button"
+                onClick={toggleVoiceInput}
+                disabled={isLoading}
+                className={`px-3 h-full text-muted-foreground hover:text-foreground transition-colors ${isListening ? "text-destructive" : ""}`}
+                title={isListening ? (language === "hi" ? "रोकें" : "Stop") : (language === "hi" ? "बोलकर खोजें" : "Voice search")}
+              >
+                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
               <Button
                 variant="hero"
                 size="lg"
@@ -276,24 +405,31 @@ const HeroSearch = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 pt-2">
-            <span className="text-muted-foreground text-sm">{currentExamples.label}</span>
-            {currentExamples.queries.map((eq) => (
+          {/* Smart suggestion chips */}
+          <div
+            className="flex flex-wrap justify-center gap-2 pt-1 animate-fade-in-up opacity-0"
+            style={{ animationDelay: "540ms" }}
+          >
+            <span className="inline-flex items-center gap-1 text-muted-foreground text-sm">
+              <Sparkles className="w-3.5 h-3.5 text-warm-amber" />
+              {language === "hi" ? "त्वरित विषय:" : "Quick topics:"}
+            </span>
+            {currentChips.map((c) => (
               <button
-                key={eq}
-                onClick={() => {
-                  setQuery(eq);
-                  handleSearch(eq);
-                }}
+                key={c.label}
+                onClick={() => { setQuery(c.query); handleSearch(c.query); }}
                 disabled={isLoading}
-                className="text-sm bg-primary/10 hover:bg-primary/20 text-foreground rounded-full px-3 py-1 transition-colors disabled:opacity-50"
+                className="text-sm bg-primary/10 hover:bg-primary/20 hover:scale-105 text-foreground rounded-full px-3 py-1.5 transition-all disabled:opacity-50 border border-primary/10"
               >
-                {eq}
+                {c.label}
               </button>
             ))}
           </div>
 
-          <div className="grid grid-cols-3 gap-4 pt-8 max-w-md mx-auto">
+          <div
+            className="grid grid-cols-3 gap-4 pt-8 max-w-md mx-auto animate-fade-in-up opacity-0"
+            style={{ animationDelay: "680ms" }}
+          >
             {[
               { num: "500+", label: language === "hi" ? "IPC/BNS धाराएँ" : "IPC/BNS Sections" },
               { num: "5", label: language === "hi" ? "भाषाएँ" : "Languages" },
@@ -307,10 +443,63 @@ const HeroSearch = () => {
           </div>
         </div>
 
+        {/* Guided action cards — shown when no search has run yet */}
+        {!hasSearched && !isLoading && (
+          <div
+            className="max-w-3xl mx-auto mt-14 grid sm:grid-cols-3 gap-4 animate-fade-in-up opacity-0"
+            style={{ animationDelay: "820ms" }}
+          >
+            {[
+              {
+                icon: BookOpen,
+                title: language === "hi" ? "शब्द समझाइए" : "Explain a term",
+                desc: language === "hi" ? "किसी कानूनी शब्द का सरल मतलब पाइए" : "Get the simple meaning of any legal term",
+                onClick: () => {
+                  const q = language === "hi" ? "मुझे 'जमानत' सरल भाषा में समझाइए" : "Explain 'bail' to me in simple words";
+                  setQuery(q); handleSearch(q);
+                },
+              },
+              {
+                icon: Upload,
+                title: language === "hi" ? "दस्तावेज़ अपलोड" : "Upload document",
+                desc: language === "hi" ? "कानूनी नोटिस / PDF को सरल भाषा में पढ़ें" : "Get a legal notice or PDF in plain language",
+                onClick: () => navigate("/document-explainer"),
+              },
+              {
+                icon: PhoneCall,
+                title: language === "hi" ? "वकील से बात की तैयारी" : "Prepare for lawyer call",
+                desc: language === "hi" ? "सही प्रश्न और दस्तावेज़ों की चेकलिस्ट" : "A checklist of questions and documents to bring",
+                onClick: () => {
+                  const q = language === "hi"
+                    ? "मुझे वकील से पहली बार बात करने की तैयारी में मदद चाहिए — क्या पूछूँ और क्या दस्तावेज़ ले जाऊँ?"
+                    : "Help me prepare for my first call with a lawyer — what should I ask and what documents should I bring?";
+                  setQuery(q); handleSearch(q);
+                },
+              },
+            ].map((card) => (
+              <button
+                key={card.title}
+                onClick={card.onClick}
+                className="group text-left bg-card/80 backdrop-blur border border-border rounded-xl p-5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 transition-all"
+              >
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                  <card.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1">{card.title}</h3>
+                <p className="text-sm text-muted-foreground">{card.desc}</p>
+              </button>
+            ))}
+          </div>
+        )}
+
         {isLoading && (
           <div className="max-w-2xl mx-auto mt-10 animate-fade-in-up">
             <div className="bg-card text-card-foreground rounded-xl shadow-2xl p-8 text-center">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-primary" />
+              <div className="flex items-center justify-center gap-1.5 mb-4">
+                <span className="w-2 h-2 rounded-full bg-primary animate-typing-dot" style={{ animationDelay: "0ms" }} />
+                <span className="w-2 h-2 rounded-full bg-primary animate-typing-dot" style={{ animationDelay: "150ms" }} />
+                <span className="w-2 h-2 rounded-full bg-primary animate-typing-dot" style={{ animationDelay: "300ms" }} />
+              </div>
               <p className="text-muted-foreground">
                 {language === "hi" ? "आपकी स्थिति का भारतीय कानूनी संहिताओं से विश्लेषण हो रहा है..." : "Analyzing your situation against Indian legal codes..."}
               </p>
