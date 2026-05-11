@@ -104,12 +104,33 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        "gradient-shift": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        "glow-drift": {
+          "0%, 100%": { transform: "translate3d(0,0,0) scale(1)", opacity: "0.55" },
+          "50%": { transform: "translate3d(20px,-20px,0) scale(1.15)", opacity: "0.85" },
+        },
+        "typing-dot": {
+          "0%, 80%, 100%": { transform: "translateY(0)", opacity: "0.4" },
+          "40%": { transform: "translateY(-4px)", opacity: "1" },
+        },
+        "caret-blink": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in-up": "fade-in-up 0.6s ease-out forwards",
         "pulse-gentle": "pulse-gentle 2s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 14s ease-in-out infinite",
+        "glow-drift-slow": "glow-drift 12s ease-in-out infinite",
+        "glow-drift-med": "glow-drift 9s ease-in-out infinite",
+        "typing-dot": "typing-dot 1.2s ease-in-out infinite",
+        "caret-blink": "caret-blink 1s steps(2,start) infinite",
       },
     },
   },
