@@ -290,7 +290,6 @@ const HeroSearch = () => {
     }
   };
 
-  const currentExamples = exampleQueries[language];
   const currentChips = suggestionChips[language];
 
   return (
