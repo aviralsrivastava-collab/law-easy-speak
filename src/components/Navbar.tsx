@@ -27,6 +27,7 @@ const Navbar = () => {
           <a href="/#topics" className="hover:text-foreground transition-colors">Topics</a>
           <a href="/#rights" className="hover:text-foreground transition-colors">Know Your Rights</a>
           <a href="/#aid" className="hover:text-foreground transition-colors">Legal Aid</a>
+          <a href="/#faq" className="hover:text-foreground transition-colors">FAQ</a>
         </div>
 
         <div className="hidden md:flex items-center gap-2">
