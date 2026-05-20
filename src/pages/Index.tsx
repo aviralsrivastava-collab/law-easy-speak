@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSearch from "@/components/HeroSearch";
+import TrustStrip from "@/components/TrustStrip";
 import CategoriesSection from "@/components/CategoriesSection";
 import TopicLibrary from "@/components/TopicLibrary";
 import KnowYourRights from "@/components/KnowYourRights";
@@ -17,6 +18,7 @@ const Index = () => {
         <div id="mapper">
           <HeroSearch />
         </div>
+        <TrustStrip />
         <Reveal as="div" className="block"><div id="categories"><CategoriesSection /></div></Reveal>
         <Reveal as="div" className="block"><div id="topics"><TopicLibrary /></div></Reveal>
         <Reveal as="div" className="block"><div id="rights"><KnowYourRights /></div></Reveal>
