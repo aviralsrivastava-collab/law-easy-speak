@@ -2,8 +2,18 @@ import { Scale, Phone, Mail, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => (
-  <footer className="bg-card border-t border-border text-foreground">
-    <div className="container py-12">
+  <footer className="relative bg-card border-t border-border text-foreground overflow-hidden">
+    <div
+      className="absolute inset-x-0 -top-px h-px"
+      style={{ background: "linear-gradient(90deg, transparent, hsl(var(--cinema-cyan) / 0.6), transparent)" }}
+      aria-hidden
+    />
+    <div
+      className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-20 blur-3xl pointer-events-none"
+      style={{ background: "radial-gradient(closest-side, hsl(var(--cinema-cyan) / 0.4), transparent)" }}
+      aria-hidden
+    />
+    <div className="container py-14 relative">
       <div className="grid md:grid-cols-4 gap-8">
         <div>
           <div className="flex items-center gap-2 mb-3">
