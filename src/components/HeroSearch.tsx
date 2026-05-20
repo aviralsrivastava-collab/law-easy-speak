@@ -295,29 +295,36 @@ const HeroSearch = () => {
 
   const currentChips = suggestionChips[language];
 
-  return (
-    <section className="relative overflow-hidden hero-animated-gradient">
-      {/* Animated glow blobs */}
-      <div
-        className="hero-glow w-[420px] h-[420px] -top-32 -left-24 bg-primary/30 animate-glow-drift-slow"
-        aria-hidden
-      />
-      <div
-        className="hero-glow w-[360px] h-[360px] top-1/2 -right-24 bg-warm-amber/20 animate-glow-drift-med"
-        aria-hidden
-      />
-      <div
-        className="hero-glow w-[300px] h-[300px] bottom-0 left-1/3 bg-safe-green/15 animate-glow-drift-slow"
-        aria-hidden
-      />
-      {/* Subtle ring decorations */}
-      <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary/40" />
-        <div className="absolute bottom-20 right-20 w-48 h-48 rounded-full border-2 border-primary/40" />
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 rounded-full border border-primary/30" />
-      </div>
+  // Capability detection: enable WebGL hero only on capable devices that don't request reduced motion.
+  const enable3D = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const isCoarse = window.matchMedia?.("(pointer: coarse)").matches;
+    const isSmall = window.innerWidth < 768;
+    return !reducedMotion && !isCoarse && !isSmall;
+  }, []);
 
-      <div className="container relative py-20 md:py-32">
+  return (
+    <section className="relative overflow-hidden cinema-stage min-h-[88vh] flex items-center">
+      {/* Cinematic 3D backdrop (lazy, capability-gated) */}
+      {enable3D && (
+        <div className="absolute inset-0 pointer-events-none">
+          <Suspense fallback={null}>
+            <CinematicScene />
+          </Suspense>
+          {/* Foreground readability scrim */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/10 to-background/70" />
+        </div>
+      )}
+      {/* Fallback ambient glow for mobile / reduced-motion */}
+      {!enable3D && (
+        <>
+          <div className="hero-glow w-[420px] h-[420px] -top-32 -left-24 bg-primary/25 animate-glow-drift-slow" aria-hidden />
+          <div className="hero-glow w-[360px] h-[360px] top-1/2 -right-24 bg-warm-amber/15 animate-glow-drift-med" aria-hidden />
+        </>
+      )}
+
+      <div className="container relative py-24 md:py-36 w-full">
         <div className="max-w-3xl mx-auto text-center space-y-7">
           <div className="flex items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: "0ms" }}>
             <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground">
