@@ -15,11 +15,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-card border-b border-border sticky top-0 z-50">
+    <nav className="glass-panel border-b border-border/60 sticky top-0 z-50 backdrop-blur-xl">
       <div className="container flex items-center justify-between h-16">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-          <Scale className="w-7 h-7 text-primary" />
-          <span className="text-xl font-bold text-foreground">LexiLearn</span>
+          <div className="relative">
+            <Scale className="w-7 h-7 text-primary" />
+            <span className="absolute inset-0 blur-md bg-primary/40 rounded-full -z-10" />
+          </div>
+          <span className="text-xl font-bold text-foreground tracking-tight">LexiLearn</span>
         </div>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
@@ -43,7 +46,7 @@ const Navbar = () => {
           ) : (
             <>
               <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>Sign In</Button>
-              <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>Get Started</Button>
+              <Button variant="hero" size="sm" className="magnetic" onClick={() => navigate("/auth")}>Get Started</Button>
             </>
           )}
         </div>
