@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search, MessageCircle, Scale, Shield, Loader2, Globe, Bookmark, BookmarkCheck,
@@ -11,6 +11,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import ProceduralRoadmap from "@/components/ProceduralRoadmap";
 import CasePrecedents, { Precedent } from "@/components/CasePrecedents";
 import jsPDF from "jspdf";
+
+// Lazy-load the WebGL scene so mobile / reduced-motion users skip the bundle cost.
+const CinematicScene = lazy(() => import("@/components/three/CinematicScene"));
 
 interface LegalResult {
   section: string;
