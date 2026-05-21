@@ -27,21 +27,24 @@ const ArticlesSection = () => {
   };
 
   return (
-    <section className="py-16 md:py-20 bg-muted/30">
+    <section className="py-20 md:py-28 relative">
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Latest Articles & Guides</h2>
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-primary/80 mb-3">
+            <span className="h-px w-8 bg-primary/40" /> Knowledge Library
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Latest Articles & Guides</h2>
           <p className="text-muted-foreground text-lg">Plain-language legal guides written for everyday citizens</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => {
             const cat = resolveCategory(article.category);
             return (
               <article
                 key={article.title}
                 onClick={() => open(article)}
-                className="group bg-card rounded-xl border border-border p-6 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer flex flex-col"
+                className="group glass-panel tilt-card rounded-2xl p-6 hover:shadow-lg hover:shadow-primary/10 transition-all duration-500 cursor-pointer flex flex-col"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${cat?.badge || "bg-muted text-muted-foreground border-border"}`}>
