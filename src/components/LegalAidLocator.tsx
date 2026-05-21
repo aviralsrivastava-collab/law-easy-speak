@@ -24,10 +24,13 @@ const LegalAidLocator = () => {
   });
 
   return (
-    <section className="py-16 md:py-20 bg-background">
+    <section className="py-20 md:py-28 relative">
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-primary/80 mb-3">
+            <span className="h-px w-8 bg-primary/40" /> Legal Aid Network
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             Find Free Legal Aid Near You
           </h2>
           <p className="text-muted-foreground text-lg">
@@ -64,7 +67,7 @@ const LegalAidLocator = () => {
           {filtered.map((d, i) => (
             <div
               key={i}
-              className="bg-card border border-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-md transition-shadow"
+              className="glass-panel rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-lg hover:shadow-primary/10 transition-all duration-500"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

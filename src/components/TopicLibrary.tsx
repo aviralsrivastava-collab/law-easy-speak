@@ -50,19 +50,22 @@ const TopicLibrary = () => {
   };
 
   return (
-    <section className="py-16 md:py-20 bg-background">
+    <section className="py-20 md:py-28 relative">
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Browse by Category</h2>
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-primary/80 mb-3">
+            <span className="h-px w-8 bg-primary/40" /> Topic Library
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Browse by Category</h2>
           <p className="text-muted-foreground text-lg">Choose a topic that matches your situation</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {topics.map((topic) => (
             <button
               key={topic.title}
               onClick={() => handleTopicClick(topic)}
-              className="group bg-card rounded-xl border border-border p-6 text-left hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300"
+              className="group glass-panel tilt-card rounded-2xl p-6 text-left hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-500"
             >
               <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg ${topic.color} border mb-4`}>
                 <topic.icon className="w-6 h-6" />

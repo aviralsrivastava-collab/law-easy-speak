@@ -84,18 +84,21 @@ const KnowYourRights = () => {
   };
 
   return (
-    <section className="py-16 md:py-20 bg-muted/50">
+    <section className="py-20 md:py-28 relative">
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Know Your Rights</h2>
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-primary/80 mb-3">
+            <span className="h-px w-8 bg-primary/40" /> Bilingual Briefings
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Know Your Rights</h2>
           <p className="text-muted-foreground text-lg">Quick visual guides with AI audio summaries — toggle between English & Hindi</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {cards.map((card, index) => {
             const lang = getCardLang(index);
             return (
-              <div key={card.title} className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:shadow-primary/5 transition-shadow group">
+              <div key={card.title} className="glass-panel tilt-card rounded-2xl p-5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-500 group">
                 <div className="flex items-start justify-between mb-3">
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <card.icon className="w-5 h-5 text-primary" />
