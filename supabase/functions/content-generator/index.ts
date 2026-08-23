@@ -115,7 +115,7 @@ Write 3-5 sections and 3-4 FAQs. Use simple everyday language. Include practical
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      console.error("Failed to parse:", content);
+      console.error("Failed to parse AI response: [REDACTED]");
       throw new Error("Failed to parse AI response");
     }
 
