@@ -115,7 +115,7 @@ Write 3-5 sections and 3-4 FAQs. Use simple everyday language. Include practical
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      console.error("Failed to parse:", content);
+      console.error("Failed to parse AI response: [REDACTED]");
       throw new Error("Failed to parse AI response");
     }
 
@@ -123,7 +123,7 @@ Write 3-5 sections and 3-4 FAQs. Use simple everyday language. Include practical
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error("content-generator error:", e);
+    console.error("content-generator error:", e instanceof Error ? e.message : "unknown");
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

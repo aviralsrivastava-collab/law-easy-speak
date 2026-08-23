@@ -75,7 +75,7 @@ Be specific, cite the relevant Indian Act/section if obvious. Keep it practical 
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error("explain-document error:", e);
+    console.error("explain-document error:", e instanceof Error ? e.message : "unknown");
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

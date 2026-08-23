@@ -71,8 +71,7 @@ serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const text = await response.text();
-      console.error("AI gateway error:", response.status, text);
+      console.error("AI gateway error:", response.status);
       throw new Error("AI gateway error");
     }
 
@@ -85,7 +84,7 @@ serve(async (req) => {
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      console.error("Failed to parse AI response:", content);
+      console.error("Failed to parse AI response: [REDACTED]");
       throw new Error("Failed to parse FIR draft");
     }
 
@@ -93,7 +92,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error("fir-draft error:", e);
+    console.error("fir-draft error:", e instanceof Error ? e.message : "unknown");
     const msg = e instanceof Error ? e.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,

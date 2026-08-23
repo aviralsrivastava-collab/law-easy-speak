@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Clock, Trash2, Search, Bookmark, ArrowLeft } from "lucide-react";
+import { Clock, Trash2, Search, Bookmark, ArrowLeft, ShieldAlert, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
@@ -65,6 +66,35 @@ const Dashboard = () => {
     setBookmarks((prev) => prev.filter((b) => b.id !== id));
     toast.success("Bookmark removed");
   };
+
+  const clearAllData = async () => {
+    if (!confirm("Delete all your saved searches and bookmarks? This cannot be undone.")) return;
+    await Promise.all([
+      supabase.from("search_history").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+      supabase.from("bookmarks").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+    ]);
+    setHistory([]);
+    setBookmarks([]);
+    toast.success("All saved data deleted");
+  };
+
+  const deleteAccount = async () => {
+    if (!confirm("Permanently delete your account and all personal data? This cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke("delete-account");
+      if (error) throw error;
+      await supabase.auth.signOut();
+      toast.success("Your account and all personal data have been deleted");
+      navigate("/");
+    } catch {
+      toast.error("Could not delete account. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+
 
   if (loading) return null;
 
@@ -137,7 +167,31 @@ const Dashboard = () => {
             ))}
           </div>
         )}
+
+        <section className="mt-14 border border-destructive/30 rounded-xl p-5 bg-destructive/5">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h2 className="font-semibold text-foreground">Your data &amp; privacy</h2>
+              <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+                We store only your name, email, saved searches and bookmarks. You can wipe your saved
+                content at any time, or permanently delete your account along with every piece of
+                personal data linked to it.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <Button variant="outline" size="sm" className="gap-1" onClick={clearAllData}>
+                  <Trash2 className="w-4 h-4" /> Clear saved searches &amp; bookmarks
+                </Button>
+                <Button variant="destructive" size="sm" className="gap-1" onClick={deleteAccount} disabled={deleting}>
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldAlert className="w-4 h-4" />}
+                  Delete my account permanently
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
       <Footer />
     </div>
   );
