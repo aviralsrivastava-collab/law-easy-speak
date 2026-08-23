@@ -167,7 +167,31 @@ const Dashboard = () => {
             ))}
           </div>
         )}
+
+        <section className="mt-14 border border-destructive/30 rounded-xl p-5 bg-destructive/5">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h2 className="font-semibold text-foreground">Your data &amp; privacy</h2>
+              <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+                We store only your name, email, saved searches and bookmarks. You can wipe your saved
+                content at any time, or permanently delete your account along with every piece of
+                personal data linked to it.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <Button variant="outline" size="sm" className="gap-1" onClick={clearAllData}>
+                  <Trash2 className="w-4 h-4" /> Clear saved searches &amp; bookmarks
+                </Button>
+                <Button variant="destructive" size="sm" className="gap-1" onClick={deleteAccount} disabled={deleting}>
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldAlert className="w-4 h-4" />}
+                  Delete my account permanently
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
       <Footer />
     </div>
   );
