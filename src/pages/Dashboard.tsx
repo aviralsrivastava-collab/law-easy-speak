@@ -66,6 +66,35 @@ const Dashboard = () => {
     toast.success("Bookmark removed");
   };
 
+  const clearAllData = async () => {
+    if (!confirm("Delete all your saved searches and bookmarks? This cannot be undone.")) return;
+    await Promise.all([
+      supabase.from("search_history").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+      supabase.from("bookmarks").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+    ]);
+    setHistory([]);
+    setBookmarks([]);
+    toast.success("All saved data deleted");
+  };
+
+  const deleteAccount = async () => {
+    if (!confirm("Permanently delete your account and all personal data? This cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke("delete-account");
+      if (error) throw error;
+      await supabase.auth.signOut();
+      toast.success("Your account and all personal data have been deleted");
+      navigate("/");
+    } catch {
+      toast.error("Could not delete account. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+
+
   if (loading) return null;
 
   return (
