@@ -69,7 +69,7 @@ Do NOT use markdown formatting - write plain text only.`,
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
-    console.error("tts-summary error:", e);
+    console.error("tts-summary error:", e instanceof Error ? e.message : "unknown");
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

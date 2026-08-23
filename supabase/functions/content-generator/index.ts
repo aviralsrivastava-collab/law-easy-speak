@@ -123,7 +123,7 @@ Write 3-5 sections and 3-4 FAQs. Use simple everyday language. Include practical
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error("content-generator error:", e);
+    console.error("content-generator error:", e instanceof Error ? e.message : "unknown");
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
