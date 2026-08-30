@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sprout, Building2, ShieldCheck, Briefcase, Scale, HeartPulse, Landmark, Smartphone, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 

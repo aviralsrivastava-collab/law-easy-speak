@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Volume2, VolumeX, Home, UserCheck, ShoppingBag, Car, Wifi, Heart, GraduationCap, Loader2, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 
 const cards = [

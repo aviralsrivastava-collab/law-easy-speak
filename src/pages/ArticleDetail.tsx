@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 import { resolveCategory, CATEGORIES, LEGAL_DISCLAIMER } from "@/lib/categories";
 
