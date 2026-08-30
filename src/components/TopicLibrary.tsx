@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sprout, Building2, ShieldCheck, Briefcase, Scale, HeartPulse, Landmark, Smartphone, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -34,6 +35,7 @@ const TopicLibrary = () => {
     setLoading(true);
 
     try {
+      if (!(await ensureSignedIn("AI topic guides"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("content-generator", {
         body: { type: "topic", title: topic.title, description: topic.items.join(", "), category: topic.subtitle },
       });

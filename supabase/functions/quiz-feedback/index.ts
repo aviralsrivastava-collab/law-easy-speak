@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireUser } from "../_shared/requireUser.ts";
 
 const ALLOWED_ORIGIN_RE =
   /^https?:\/\/(localhost(:\d+)?|127\.0\.0\.1(:\d+)?|([a-z0-9-]+\.)*lovable\.app|([a-z0-9-]+\.)*lovableproject\.com)$/i;
@@ -60,6 +61,10 @@ serve(async (req) => {
       { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } },
     );
   }
+
+  // Require a valid signed-in session (JWT validated in-code).
+  const auth = await requireUser(req, corsHeaders);
+  if ("response" in auth) return auth.response;
 
   try {
     const { quizTopic, question, options, correctIndex, userAnswerIndex } = await req.json();

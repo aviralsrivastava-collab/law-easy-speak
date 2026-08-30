@@ -19,20 +19,25 @@ function corsFor(req: Request) {
   };
 }
 
-// --- Simple in-memory per-IP rate limit (best effort, per isolate) ---
-const RATE_LIMIT = 15;
+// --- Per-IP rate limit: this function stays public (anonymous hero search),
+// so it carries both a burst cap and a daily cap to protect AI credits. ---
+const RATE_LIMIT = 6;
 const RATE_WINDOW_MS = 60_000;
+const DAILY_LIMIT = 40;
+const DAY_MS = 86_400_000;
 const hits = new Map<string, number[]>();
 function rateLimited(req: Request) {
   const ip =
     (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
   const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < DAY_MS);
   recent.push(now);
   hits.set(ip, recent);
   if (hits.size > 5000) hits.clear();
-  return recent.length > RATE_LIMIT;
+  const burst = recent.filter((t) => now - t < RATE_WINDOW_MS).length;
+  return burst > RATE_LIMIT || recent.length > DAILY_LIMIT;
 }
+
 
 /** Never leak stack traces, provider payloads or internals to the client. */
 function failure(corsHeaders: Record<string, string>, e: unknown, fn: string) {
