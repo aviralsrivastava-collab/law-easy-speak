@@ -44,6 +44,7 @@ const KnowYourRights = () => {
       const title = lang === "hi" ? card.titleHi : card.title;
       const desc = lang === "hi" ? card.descHi : card.desc;
 
+      if (!(await ensureSignedIn("audio summaries"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("tts-summary", {
         body: { text: desc, title: title },
       });

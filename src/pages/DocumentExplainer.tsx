@@ -75,6 +75,7 @@ const DocumentExplainer = () => {
     setLoading(true);
     setResult(null);
     try {
+      if (!(await ensureSignedIn("the document explainer"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("explain-document", {
         body: { text },
       });

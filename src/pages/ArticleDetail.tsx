@@ -50,6 +50,7 @@ const ArticleDetail = () => {
     setLoading(true);
     setArticle(null);
     try {
+      if (!(await ensureSignedIn("AI article generation"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("content-generator", {
         body: { type: "article", title, description, category },
       });

@@ -162,6 +162,7 @@ const HeroSearch = () => {
     }
     setGeneratingFir(r.section);
     try {
+      if (!(await ensureSignedIn("the FIR draft generator"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("fir-draft", {
         body: { situation, section: r.section, title: r.title },
       });

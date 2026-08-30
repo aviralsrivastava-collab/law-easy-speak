@@ -51,6 +51,7 @@ const QuizPlayer = () => {
     if (selected === null) return;
     setLoading(true);
     try {
+      if (!(await ensureSignedIn("AI quiz feedback"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("quiz-feedback", {
         body: {
           quizTopic: quiz.title,

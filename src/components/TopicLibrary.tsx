@@ -35,6 +35,7 @@ const TopicLibrary = () => {
     setLoading(true);
 
     try {
+      if (!(await ensureSignedIn("AI topic guides"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("content-generator", {
         body: { type: "topic", title: topic.title, description: topic.items.join(", "), category: topic.subtitle },
       });
