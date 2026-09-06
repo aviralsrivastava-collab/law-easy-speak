@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Volume2, VolumeX, Home, UserCheck, ShoppingBag, Car, Wifi, Heart, GraduationCap, Loader2, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 
 const cards = [
@@ -44,7 +43,6 @@ const KnowYourRights = () => {
       const title = lang === "hi" ? card.titleHi : card.title;
       const desc = lang === "hi" ? card.descHi : card.desc;
 
-      if (!(await ensureSignedIn("audio summaries"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("tts-summary", {
         body: { text: desc, title: title },
       });

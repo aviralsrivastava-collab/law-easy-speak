@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { QUIZZES } from "@/data/quizzes";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 import { LEGAL_DISCLAIMER } from "@/lib/categories";
 
@@ -51,7 +50,6 @@ const QuizPlayer = () => {
     if (selected === null) return;
     setLoading(true);
     try {
-      if (!(await ensureSignedIn("AI quiz feedback"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("quiz-feedback", {
         body: {
           quizTopic: quiz.title,
