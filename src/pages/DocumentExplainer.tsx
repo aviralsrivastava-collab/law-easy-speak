@@ -9,7 +9,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureSignedIn } from "@/lib/ensureSignedIn";
 import { toast } from "sonner";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { LEGAL_DISCLAIMER } from "@/lib/categories";
@@ -75,7 +74,6 @@ const DocumentExplainer = () => {
     setLoading(true);
     setResult(null);
     try {
-      if (!(await ensureSignedIn("the document explainer"))) throw new Error("Sign in required");
       const { data, error } = await supabase.functions.invoke("explain-document", {
         body: { text },
       });
